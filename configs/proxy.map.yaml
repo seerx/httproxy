@@ -1,0 +1,9 @@
+home: 
+  port: 9102
+proxy:
+  - host: xval.cn
+    target: 127.0.0.1:9102
+    scheme: http
+  - host: www.xval.cn
+    target: 127.0.0.1:9102
+    scheme: http

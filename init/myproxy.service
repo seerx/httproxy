@@ -1,0 +1,16 @@
+[Unit]
+Description="proxy -- 我的代理"
+After=network.target
+#Requires=pgsql.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/myproxy/proxy-amd64 -f /usr/local/myproxy/proxy.map.yaml
+#ExecStatus=/uxsr/local/collect/ycjk-amd64 -s status
+#ExecStop=/usr/local/collect/ycjk-amd64 -s stop
+KillSignal=SIGQUIT
+KillMode=process
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
