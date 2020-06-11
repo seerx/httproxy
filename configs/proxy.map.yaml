@@ -7,3 +7,4 @@ proxy:
   - host: www.xval.cn
     target: 127.0.0.1:9102
     scheme: http
+black-ip-list-file: /usr/local/myproxy/black.list

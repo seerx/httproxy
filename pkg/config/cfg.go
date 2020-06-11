@@ -20,8 +20,9 @@ type Home struct {
 
 // Configure 配置
 type Configure struct {
-	Home      *Home       `yaml:"home"`
-	ProxyMaps []*ProxyMap `yaml:"proxy"`
+	BlackListFile string      `yaml:"black-ip-list-file"`
+	Home          *Home       `yaml:"home"`
+	ProxyMaps     []*ProxyMap `yaml:"proxy"`
 }
 
 // Parse 加载配置信息
