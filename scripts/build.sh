@@ -18,13 +18,13 @@ go build -o ./proxy-amd64 \
 export GOOS=darwin
 
 echo "Stoping service ..."
-sshpass -p $PWD_OF_ALIYUN ssh root@$HOST_OF_ALIYUN "systemctl stop myproxy"
+sshpass -p $PWD_OF_ALIYUN ssh root@xval.cn "systemctl stop myproxy"
 
 echo "Uploading ..."
-sshpass -p $PWD_OF_ALIYUN scp ./proxy-amd64 root@$HOST_OF_ALIYUN:/usr/local/myproxy/
+sshpass -p $PWD_OF_ALIYUN scp ./proxy-amd64 root@xval.cn:/usr/local/proxy/
 
 echo "Starting service ..."
-sshpass -p $PWD_OF_ALIYUN ssh root@$HOST_OF_ALIYUN "systemctl start myproxy"
+sshpass -p $PWD_OF_ALIYUN ssh root@xval.cn "systemctl start myproxy"
 
 rm -f ./proxy-amd64
 

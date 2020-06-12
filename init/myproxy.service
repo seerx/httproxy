@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/myproxy/proxy-amd64 -f /usr/local/myproxy/proxy.map.yaml
+ExecStart=/usr/local/proxy/proxy-amd64 -f /usr/local/proxy/proxy.map.yaml
 #ExecStatus=/uxsr/local/collect/ycjk-amd64 -s status
 #ExecStop=/usr/local/collect/ycjk-amd64 -s stop
 KillSignal=SIGQUIT
