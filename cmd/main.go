@@ -16,27 +16,46 @@ import (
 
 var invalideHostMap = map[string]int{}
 var mapLocker sync.Mutex
+var chBlock chan string
 
 const invalideMaxTimes = 3
+
+func startBlocker() {
+	chBlock = make(chan string, 1000)
+	go func() {
+		for ip := range chBlock {
+			c, ok := invalideHostMap[ip]
+			if !ok {
+				invalideHostMap[ip] = 1
+			} else if c+1 >= invalideMaxTimes {
+				delete(invalideHostMap, ip)
+				block.RejectIP(ip)
+			} else {
+				invalideHostMap[ip] = c + 1
+			}
+		}
+	}()
+}
 
 func invalide(remoteAddr string) {
 	idx := strings.Index(remoteAddr, ":")
 	if idx > 0 {
 		remoteAddr = remoteAddr[:idx]
+		chBlock <- remoteAddr
 	}
-	go func() {
-		mapLocker.Lock()
-		defer mapLocker.Unlock()
-		c, ok := invalideHostMap[remoteAddr]
-		if !ok {
-			invalideHostMap[remoteAddr] = 1
-		} else if c+1 >= invalideMaxTimes {
-			delete(invalideHostMap, remoteAddr)
-			block.RejectIP(remoteAddr)
-		} else {
-			invalideHostMap[remoteAddr] = c + 1
-		}
-	}()
+	// go func() {
+	// 	mapLocker.Lock()
+	// 	defer mapLocker.Unlock()
+	// 	c, ok := invalideHostMap[remoteAddr]
+	// 	if !ok {
+	// 		invalideHostMap[remoteAddr] = 1
+	// 	} else if c+1 >= invalideMaxTimes {
+	// 		delete(invalideHostMap, remoteAddr)
+	// 		block.RejectIP(remoteAddr)
+	// 	} else {
+	// 		invalideHostMap[remoteAddr] = c + 1
+	// 	}
+	// }()
 }
 
 func newReverseProxy(proxyMap map[string]*config.ProxyMap) *httputil.ReverseProxy {
@@ -63,6 +82,19 @@ func newReverseProxy(proxyMap map[string]*config.ProxyMap) *httputil.ReverseProx
 }
 
 func main() {
+	// out, err := exec.Command("python3", "-V").Output()
+	// exec.Command()
+	// IP := "106.12.141.152"
+	// // reject := fmt.Sprintf("--add-rich-rule='rule family=ipv4 source address=%s port protocol=tcp port=80 reject'", IP)
+	// out, err := exec.Command("bash",
+	// 	"/usr/local/proxy/deny.sh",
+	// 	IP,
+	// 	// "reject",
+	// ).Output()
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// }
+	// log.Println(string(out))
 	// 读取配置文件
 	data := configure.GetConfigureData("f", "e")
 	cfg, err := config.Parse(data)
@@ -71,6 +103,8 @@ func main() {
 	}
 	// 启动主站
 	go xval.Start(cfg.Home.Port)
+
+	startBlocker()
 
 	// 解析反向代理表
 	pmap := map[string]*config.ProxyMap{}
