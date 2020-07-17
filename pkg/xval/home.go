@@ -15,5 +15,6 @@ func Start(port int) {
 	}
 	log.Println("Home page at ", port)
 	mux.HandleFunc("/", PageHandle)
+	mux.HandleFunc("/app", AppHandle)
 	log.Fatal(svr.ListenAndServe())
 }
